@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace ASI_Dotnet_API_V2.Model.EntityFramework
 {
-    [Table("Notation")]
+    [Table("t_j_notation_not")]
     public partial class Notation
     {
         [Key]
@@ -18,7 +18,6 @@ namespace ASI_Dotnet_API_V2.Model.EntityFramework
         public int SerieId { get; set; }
 
         [Column("not_note")]
-        [Range(0, 5, ErrorMessage = "La note doit être comprise entre 0 et 5.")]
         public int Note { get; set; }
 
 

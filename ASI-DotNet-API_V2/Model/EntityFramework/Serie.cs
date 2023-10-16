@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ASI_Dotnet_API_V2.Model.EntityFramework
 {
-    [Table("Serie")]
+    [Table("t_e_serie_ser")]
     public partial class Serie
     {
         [Key]
@@ -39,7 +39,6 @@ namespace ASI_Dotnet_API_V2.Model.EntityFramework
 
         [InverseProperty(nameof(Notation.SerieNotee))]
         public  virtual ICollection<Notation> NotesSeries { get; set; }
-       // public ICollection<Notation> NotesSerie { get; internal set; }
 
     }
 }

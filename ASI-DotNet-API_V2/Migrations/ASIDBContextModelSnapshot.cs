@@ -33,15 +33,18 @@ namespace ASI_DotNet_API_V2.Migrations
                         .HasColumnName("ser_id");
 
                     b.Property<int>("Note")
+                        .IsConcurrencyToken()
                         .HasColumnType("int")
                         .HasColumnName("not_note");
 
                     b.HasKey("UtilisateurId", "SerieId")
-                        .HasName("PK_Notation_utl_id_ser_id");
+                        .HasName("pk_not");
 
                     b.HasIndex("SerieId");
 
-                    b.ToTable("Notation", (string)null);
+                    b.ToTable("t_j_notation_not", (string)null);
+
+                    b.HasCheckConstraint("ck_not_note", "not_note between 0 and 5");
                 });
 
             modelBuilder.Entity("ASI_Dotnet_API_V2.Model.EntityFramework.Serie", b =>
@@ -81,9 +84,9 @@ namespace ASI_DotNet_API_V2.Migrations
                         .HasColumnName("ser_titre");
 
                     b.HasKey("SerieId")
-                        .HasName("PK_Serie_ser_id");
+                        .HasName("pk_ser");
 
-                    b.ToTable("Serie", (string)null);
+                    b.ToTable("t_e_serie_ser", (string)null);
                 });
 
             modelBuilder.Entity("ASI_Dotnet_API_V2.Model.EntityFramework.Utilisateur", b =>
@@ -101,8 +104,10 @@ namespace ASI_DotNet_API_V2.Migrations
 
                     b.Property<DateTime?>("DateCreation")
                         .IsRequired()
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("date")
-                        .HasColumnName("utl_datecreation");
+                        .HasColumnName("utl_datecreation")
+                        .HasDefaultValueSql("NOW()");
 
                     b.Property<float?>("Latitude")
                         .HasColumnType("float")
@@ -149,9 +154,12 @@ namespace ASI_DotNet_API_V2.Migrations
                         .HasColumnName("utl_ville");
 
                     b.HasKey("UtilisateurId")
-                        .HasName("PK_Utilisateur_utl_id");
+                        .HasName("pk_util");
 
-                    b.ToTable("Utilisateur", (string)null);
+                    b.HasIndex("Mail")
+                        .IsUnique();
+
+                    b.ToTable("t_e_utilisateur_utl", (string)null);
                 });
 
             modelBuilder.Entity("ASI_Dotnet_API_V2.Model.EntityFramework.Notation", b =>
@@ -159,14 +167,15 @@ namespace ASI_DotNet_API_V2.Migrations
                     b.HasOne("ASI_Dotnet_API_V2.Model.EntityFramework.Serie", "SerieNotee")
                         .WithMany("NotesSeries")
                         .HasForeignKey("SerieId")
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired()
-                        .HasConstraintName("FK_Notation_Serie_ser_id");
+                        .HasConstraintName("fk_not_ser");
 
                     b.HasOne("ASI_Dotnet_API_V2.Model.EntityFramework.Utilisateur", "UtilisateurNotant")
                         .WithMany("NotesUtilisateurs")
                         .HasForeignKey("UtilisateurId")
                         .IsRequired()
-                        .HasConstraintName("FK_Notation_Utilisateur_utl_id");
+                        .HasConstraintName("fk_not_utl");
 
                     b.Navigation("SerieNotee");
 

@@ -5,7 +5,7 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace ASI_Dotnet_API_V2.Model.EntityFramework
 {
-    [Table("Utilisateur")]
+    [Table("t_e_utilisateur_utl")]
     public class Utilisateur
     {
         [Key]
@@ -58,6 +58,5 @@ namespace ASI_Dotnet_API_V2.Model.EntityFramework
 
        [InverseProperty(nameof(Notation.UtilisateurNotant))]
         public virtual ICollection<Notation> NotesUtilisateurs { get; set; }
-    //    public ICollection<Notation>? NotesUtilisateur { get; internal set; }
     }
 }

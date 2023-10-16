@@ -25,8 +25,8 @@ namespace ASI_Dotnet_API_V2.Model.EntityFramework
         {
             modelBuilder.Entity<Serie>(entity =>
             {
-                entity.ToTable("Serie");
-                entity.HasKey(e => new { e.SerieId}).HasName("PK_Serie_ser_id");
+                entity.ToTable("t_e_serie_ser");
+                entity.HasKey(e => new { e.SerieId}).HasName("pk_ser");
                 entity.Property(e => e.SerieId)
                     .HasColumnName("ser_id");
                 entity.Property(e => e.Titre).IsRequired()
@@ -52,32 +52,36 @@ namespace ASI_Dotnet_API_V2.Model.EntityFramework
 
             modelBuilder.Entity<Notation>(entity =>
             {
-                entity.ToTable("Notation");
-                entity.HasKey(e => new { e.UtilisateurId, e.SerieId }).HasName("PK_Notation_utl_id_ser_id");
+                entity.ToTable("t_j_notation_not");
+                entity.HasKey(e => new { e.UtilisateurId, e.SerieId }).HasName("pk_not");
                 entity.Property(e => e.UtilisateurId)
                     .HasColumnName("utl_id");
                 entity.Property(e => e.SerieId)
                     .HasColumnName("ser_id");
                 entity.Property(e => e.Note)
+                    .IsConcurrencyToken()
                     .HasColumnName("not_note")
-                    .IsRequired()
-                    .HasColumnType("int");
+                    .HasColumnType("int")
+                    .IsRequired();
+
                 entity.HasOne(d => d.UtilisateurNotant)
                     .WithMany(p => p.NotesUtilisateurs)
                     .HasForeignKey(d => d.UtilisateurId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_Notation_Utilisateur_utl_id");
+                    .OnDelete(DeleteBehavior.Restrict)
+                    .HasConstraintName("fk_not_utl");
                 entity.HasOne(d => d.SerieNotee)
                     .WithMany(p => p.NotesSeries)
                     .HasForeignKey(d => d.SerieId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_Notation_Serie_ser_id");
+                    .OnDelete(DeleteBehavior.Restrict)
+                    .HasConstraintName("fk_not_ser");
+
+                entity.HasCheckConstraint("ck_not_note", "not_note between 0 and 5");
             });
 
             modelBuilder.Entity<Utilisateur>(entity =>
             {
-                entity.ToTable("Utilisateur");
-                entity.HasKey(e => e.UtilisateurId).HasName("PK_Utilisateur_utl_id");
+                entity.ToTable("t_e_utilisateur_utl");
+                entity.HasKey(e => e.UtilisateurId).HasName("pk_util");
                 entity.Property(e => e.UtilisateurId)
                     .HasColumnName("utl_id")
                     .ValueGeneratedOnAdd();
@@ -120,13 +124,18 @@ namespace ASI_Dotnet_API_V2.Model.EntityFramework
                 entity.Property(e => e.DateCreation)
                     .HasColumnName("utl_datecreation")
                     .HasColumnType("date")
-                    .IsRequired();
+                    .IsRequired()
+                    .HasDefaultValueSql("NOW()");
                 entity.HasMany(d => d.NotesUtilisateurs)
                     .WithOne(p => p.UtilisateurNotant)
                     .HasForeignKey(e => e.UtilisateurId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_Notation_Utilisateur_utl_id");
+                    .HasConstraintName("fk_not_utl");
             });
+
+            modelBuilder.Entity<Utilisateur>()
+                .HasIndex(u => u.Mail)
+                .IsUnique();
 
             base.OnModelCreating(modelBuilder);
         }
