@@ -13,6 +13,7 @@ namespace ASI_Dotnet_API_V2.Model.EntityFramework
         public ASIDBContext()
         {
         }
+        /*
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)
@@ -20,6 +21,7 @@ namespace ASI_Dotnet_API_V2.Model.EntityFramework
                 optionsBuilder.UseNpgsql("Server=localhost;port=5432;Database=ASIDB; uid=postgres; password = postgres; ");
             }
         }
+        */
         
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

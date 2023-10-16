@@ -1,3 +1,6 @@
+using Microsoft.EntityFrameworkCore;
+using ASI_Dotnet_API_V2.Model.EntityFramework;
+
 namespace ASI_DotNet_API_V2
 {
     public class Program
@@ -7,6 +10,7 @@ namespace ASI_DotNet_API_V2
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
+            builder.Services.AddDbContext<ASIDBContext>(options => options.UseNpgsql(builder.Configuration.GetConnectionString("ASIDBContextSQLite")));
 
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
