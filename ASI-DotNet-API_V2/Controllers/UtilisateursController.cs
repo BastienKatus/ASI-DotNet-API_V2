@@ -22,6 +22,8 @@ namespace ASI_DotNet_API_V2.Controllers
 
         // GET: api/Utilisateurs
         [HttpGet]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<IEnumerable<Utilisateur>>> GetUtilisateurs()
         {
           if (_context.Utilisateurs == null)
@@ -31,9 +33,12 @@ namespace ASI_DotNet_API_V2.Controllers
             return await _context.Utilisateurs.ToListAsync();
         }
 
-        // GET: api/Utilisateurs/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Utilisateur>> GetUtilisateur(int id)
+        [HttpGet]
+        [Route("GetById/{id}")]
+        [ActionName("id")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult<Utilisateur>> GetUtilisateurById(int id)
         {
           if (_context.Utilisateurs == null)
           {
@@ -43,7 +48,28 @@ namespace ASI_DotNet_API_V2.Controllers
 
             if (utilisateur == null)
             {
+                return NotFound("ID utilisateur inconnu");
+            }
+
+            return utilisateur;
+        }
+        
+        [HttpGet]
+        [Route("GetByEmail/{email}")]
+        [ActionName("email")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult<Utilisateur>> GetUtilisateurByEmail(string email)
+        {
+            if (_context.Utilisateurs == null)
+            {
                 return NotFound();
+            }
+            var utilisateur = await _context.Utilisateurs.FirstOrDefaultAsync(u => u.Mail == email); ;
+
+            if (utilisateur == null)
+            {
+                return NotFound("Email Utilisateur inconnu");
             }
 
             return utilisateur;
@@ -52,6 +78,9 @@ namespace ASI_DotNet_API_V2.Controllers
         // PUT: api/Utilisateurs/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> PutUtilisateur(int id, Utilisateur utilisateur)
         {
             if (id != utilisateur.UtilisateurId)
@@ -69,7 +98,7 @@ namespace ASI_DotNet_API_V2.Controllers
             {
                 if (!UtilisateurExists(id))
                 {
-                    return NotFound();
+                    return NotFound("L'utilisateur n'existe pas");
                 }
                 else
                 {
@@ -83,6 +112,8 @@ namespace ASI_DotNet_API_V2.Controllers
         // POST: api/Utilisateurs
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<Utilisateur>> PostUtilisateur(Utilisateur utilisateur)
         {
           if (_context.Utilisateurs == null)
@@ -97,6 +128,8 @@ namespace ASI_DotNet_API_V2.Controllers
 
         // DELETE: api/Utilisateurs/5
         [HttpDelete("{id}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> DeleteUtilisateur(int id)
         {
             if (_context.Utilisateurs == null)

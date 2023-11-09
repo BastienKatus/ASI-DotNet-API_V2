@@ -13,18 +13,27 @@ namespace ASI_Dotnet_API_V2.Model.EntityFramework
         public ASIDBContext()
         {
         }
-        /*
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+
+        public ASIDBContext(DbContextOptions options) : base(options)
         {
-            if (!optionsBuilder.IsConfigured)
-            {
-                optionsBuilder.UseNpgsql("Server=localhost;port=5432;Database=ASIDB; uid=postgres; password = postgres; ");
-            }
         }
-        */
-        
+
+        public ASIDBContext(DbContextOptions<ASIDBContext> options) : base (options) { }
+
+        /*
+protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+{
+   if (!optionsBuilder.IsConfigured)
+   {
+       optionsBuilder.UseNpgsql("Server=localhost;port=5432;Database=ASIDB; uid=postgres; password = postgres; ");
+   }
+}
+*/
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.HasDefaultSchema("public");
+
             modelBuilder.Entity<Serie>(entity =>
             {
                 entity.ToTable("t_e_serie_ser");
@@ -69,7 +78,7 @@ namespace ASI_Dotnet_API_V2.Model.EntityFramework
                 entity.HasOne(d => d.UtilisateurNotant)
                     .WithMany(p => p.NotesUtilisateurs)
                     .HasForeignKey(d => d.UtilisateurId)
-                    .OnDelete(DeleteBehavior.Restrict)
+                    .OnDelete(DeleteBehavior.ClientCascade)
                     .HasConstraintName("fk_not_utl");
                 entity.HasOne(d => d.SerieNotee)
                     .WithMany(p => p.NotesSeries)
@@ -131,7 +140,7 @@ namespace ASI_Dotnet_API_V2.Model.EntityFramework
                 entity.HasMany(d => d.NotesUtilisateurs)
                     .WithOne(p => p.UtilisateurNotant)
                     .HasForeignKey(e => e.UtilisateurId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .OnDelete(DeleteBehavior.ClientCascade)
                     .HasConstraintName("fk_not_utl");
             });
 

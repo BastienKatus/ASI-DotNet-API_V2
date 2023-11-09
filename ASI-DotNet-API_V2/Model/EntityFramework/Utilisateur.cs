@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using Microsoft.AspNetCore.Mvc;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Diagnostics.CodeAnalysis;
@@ -20,10 +21,13 @@ namespace ASI_Dotnet_API_V2.Model.EntityFramework
         public string? Prenom { get; set; }
 
         [Column("utl_mobile", TypeName = "char(10)")]
+        [RegularExpression(@"^0[0-9]{9}$", ErrorMessage = "…")]
         public string? Mobile { get; set; }
 
         [Required]
         [Column("utl_mail", TypeName = "varchar(100)")]
+        [EmailAddress(ErrorMessage = "Le mail saisie ne semble pas correspondondre aux attentes")]
+        [StringLength(100, MinimumLength = 6, ErrorMessage = "La longueur d’un email doit être comprise entre 6 et 100 caractères.")]
         public string? Mail { get; set; }
 
         [Required]
@@ -45,10 +49,10 @@ namespace ASI_Dotnet_API_V2.Model.EntityFramework
 
 
         [Column("utl_latitude", TypeName = "float")]
-        public float? Latitude { get; set; }
+        public double? Latitude { get; set; }
 
         [Column("utl_longitude", TypeName = "float")]
-        public float? Longitude { get; set; }
+        public double? Longitude { get; set; }
 
         [Required]
         [Column("utl_datecreation", TypeName = "datetime")]

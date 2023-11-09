@@ -3,6 +3,7 @@ using System;
 using ASI_Dotnet_API_V2.Model.EntityFramework;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,10 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace ASI_DotNet_API_V2.Migrations
 {
     [DbContext(typeof(ASIDBContext))]
-    partial class ASIDBContextModelSnapshot : ModelSnapshot
+    [Migration("20231109134732_NewAnnotations1")]
+    partial class NewAnnotations1
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

@@ -27,8 +27,5 @@
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
     }
-  },
-  "ConnectionStrings": {
-    "ASIDBContextSQLite": "Data Source=CU.db"
   }
 }
