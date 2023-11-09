@@ -18,7 +18,6 @@ namespace ASI_Dotnet_API_V2.Model.EntityFramework
         {
         }
 
-        public ASIDBContext(DbContextOptions<ASIDBContext> options) : base (options) { }
 
         /*
 protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

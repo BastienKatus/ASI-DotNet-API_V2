@@ -1,5 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using ASI_Dotnet_API_V2.Model.EntityFramework;
+using ASI_DotNet_API_V2.Model.DataManager;
+using ASI_DotNet_API_V2.Model.Repository;
 
 namespace ASI_DotNet_API_V2
 {
@@ -19,6 +21,9 @@ namespace ASI_DotNet_API_V2
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
+
+            builder.Services.AddScoped<IDataRepository<Utilisateur>, UtilisateurManager>();
+
 
             var app = builder.Build();
 

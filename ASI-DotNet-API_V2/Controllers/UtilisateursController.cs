@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ASI_Dotnet_API_V2.Model.EntityFramework;
+using ASI_DotNet_API_V2.Model.DataManager;
+using ASI_DotNet_API_V2.Model.Repository;
 
 namespace ASI_DotNet_API_V2.Controllers
 {
@@ -13,11 +15,11 @@ namespace ASI_DotNet_API_V2.Controllers
     [ApiController]
     public class UtilisateursController : ControllerBase
     {
-        private readonly ASIDBContext _context;
-
-        public UtilisateursController(ASIDBContext context)
+        //private readonly ASIDBContext _context;
+        private readonly IDataRepository<Utilisateur> dataRepository;
+        public UtilisateursController(IDataRepository<Utilisateur> dataRepo)
         {
-            _context = context;
+            dataRepository = dataRepo;
         }
 
         // GET: api/Utilisateurs
@@ -26,11 +28,8 @@ namespace ASI_DotNet_API_V2.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<IEnumerable<Utilisateur>>> GetUtilisateurs()
         {
-          if (_context.Utilisateurs == null)
-          {
-              return NotFound();
-          }
-            return await _context.Utilisateurs.ToListAsync();
+
+            return await dataRepository.GetAllAsync();
         }
 
         [HttpGet]
@@ -40,18 +39,14 @@ namespace ASI_DotNet_API_V2.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<Utilisateur>> GetUtilisateurById(int id)
         {
-          if (_context.Utilisateurs == null)
-          {
-              return NotFound();
-          }
-            var utilisateur = await _context.Utilisateurs.FindAsync(id);
+
+            var utilisateur = dataRepository.GetByIdAsync(id);
 
             if (utilisateur == null)
             {
                 return NotFound("ID utilisateur inconnu");
             }
-
-            return utilisateur;
+            return await utilisateur;
         }
         
         [HttpGet]
@@ -61,18 +56,15 @@ namespace ASI_DotNet_API_V2.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<Utilisateur>> GetUtilisateurByEmail(string email)
         {
-            if (_context.Utilisateurs == null)
-            {
-                return NotFound();
-            }
-            var utilisateur = await _context.Utilisateurs.FirstOrDefaultAsync(u => u.Mail == email); ;
+
+            var utilisateur = dataRepository.GetByStringAsync(email);
 
             if (utilisateur == null)
             {
                 return NotFound("Email Utilisateur inconnu");
             }
 
-            return utilisateur;
+            return await utilisateur;
         }
 
         // PUT: api/Utilisateurs/5
@@ -87,26 +79,16 @@ namespace ASI_DotNet_API_V2.Controllers
             {
                 return BadRequest();
             }
-
-            _context.Entry(utilisateur).State = EntityState.Modified;
-
-            try
+            var userToUpdate = await dataRepository.GetByIdAsync(id);
+            if (userToUpdate == null)
             {
-                await _context.SaveChangesAsync();
+                return NotFound();
             }
-            catch (DbUpdateConcurrencyException)
+            else
             {
-                if (!UtilisateurExists(id))
-                {
-                    return NotFound("L'utilisateur n'existe pas");
-                }
-                else
-                {
-                    throw;
-                }
+                await dataRepository.UpdateAsync(userToUpdate.Value, utilisateur);
+                return NoContent();
             }
-
-            return NoContent();
         }
 
         // POST: api/Utilisateurs
@@ -116,14 +98,12 @@ namespace ASI_DotNet_API_V2.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<Utilisateur>> PostUtilisateur(Utilisateur utilisateur)
         {
-          if (_context.Utilisateurs == null)
-          {
-              return Problem("Entity set 'ASIDBContext.Utilisateurs'  is null.");
-          }
-            _context.Utilisateurs.Add(utilisateur);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction("GetUtilisateur", new { id = utilisateur.UtilisateurId }, utilisateur);
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            await dataRepository.AddAsync(utilisateur);
+            return CreatedAtAction("GetById", new { id = utilisateur.UtilisateurId }, utilisateur); // GetById : nom de l’action
         }
 
         // DELETE: api/Utilisateurs/5
@@ -132,25 +112,18 @@ namespace ASI_DotNet_API_V2.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> DeleteUtilisateur(int id)
         {
-            if (_context.Utilisateurs == null)
-            {
-                return NotFound();
-            }
-            var utilisateur = await _context.Utilisateurs.FindAsync(id);
+            var utilisateur = await dataRepository.GetByIdAsync(id);
             if (utilisateur == null)
             {
                 return NotFound();
             }
-
-            _context.Utilisateurs.Remove(utilisateur);
-            await _context.SaveChangesAsync();
-
+            await dataRepository.DeleteAsync(utilisateur.Value);
             return NoContent();
         }
 
-        private bool UtilisateurExists(int id)
+      /*  private bool UtilisateurExists(int id)
         {
             return (_context.Utilisateurs?.Any(e => e.UtilisateurId == id)).GetValueOrDefault();
-        }
+        }*/
     }
 }
