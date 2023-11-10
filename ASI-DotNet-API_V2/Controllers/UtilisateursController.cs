@@ -40,13 +40,13 @@ namespace ASI_DotNet_API_V2.Controllers
         public async Task<ActionResult<Utilisateur>> GetUtilisateurById(int id)
         {
 
-            var utilisateur = dataRepository.GetByIdAsync(id);
+            var utilisateur = await dataRepository.GetByIdAsync(id);
 
             if (utilisateur == null)
             {
-                return NotFound("ID utilisateur inconnu");
+                return NotFound();
             }
-            return await utilisateur;
+            return utilisateur;
         }
         
         [HttpGet]
@@ -57,14 +57,14 @@ namespace ASI_DotNet_API_V2.Controllers
         public async Task<ActionResult<Utilisateur>> GetUtilisateurByEmail(string email)
         {
 
-            var utilisateur = dataRepository.GetByStringAsync(email);
+            var utilisateur = await dataRepository.GetByStringAsync(email);
 
             if (utilisateur == null)
             {
-                return NotFound("Email Utilisateur inconnu");
+                return NotFound();
             }
 
-            return await utilisateur;
+            return utilisateur;
         }
 
         // PUT: api/Utilisateurs/5
